@@ -24,6 +24,7 @@ type ShowAlert = {
 }
 
 export default function Home() {
+  const NUMBER_ARRAY = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
   const [score, setScore] = useState(0)
   const [currentId, setCurrentId] = useState(0)
   const [showAlert, setShowAlert] = useState<ShowAlert>({show: false, data: ''})
@@ -37,6 +38,24 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const shuffle = (array: Array<number>) => {
+    let currentIndex = array.length,  randomIndex;
+  
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+  }
+
   const initializePage = () => {
     setCurrentId(0)
     setButtonsArray([])
@@ -47,19 +66,25 @@ export default function Home() {
     const array: ButtonsArray[] = []
     let orderedIds: Array<string> = []
 
-    for(let i = 1; i <= 45; i++){
+    for(let i = 0; i < 45; i++){
       const key = uuidv4()
       array.push({key: key, visibility: false, innerNumber: '', innerNumberVisibility: false})
+      setOccupiedNumbers(occupiedNumbers.set(key, i))
     }
 
-    for(let i = 0; i < 10; ++i) {
+    let numberArray = NUMBER_ARRAY
+    shuffle(numberArray)
+    let selected = numberArray.slice(0, 3);
+    selected.sort()
+
+    for(let i = 0; i < 3; ++i) {
       let randomNumber = Math.floor(Math.random() * 45)
       while(typeof occupiedNumbers.get(randomNumber) === 'number'){
         randomNumber = Math.floor(Math.random() * 45)
       }
       const key = uuidv4()
-      array[randomNumber] = {key: key, visibility: true, innerNumber: i, innerNumberVisibility: true}
-      setOccupiedNumbers(occupiedNumbers.set(randomNumber, i))
+      array[randomNumber] = {key: key, visibility: true, innerNumber: selected[i], innerNumberVisibility: true}
+      setOccupiedNumbers(occupiedNumbers.set(randomNumber, selected[i]))
       setOccupiedNumbers(occupiedNumbers.set(key, randomNumber))
       orderedIds.push(key)
     }
@@ -73,6 +98,9 @@ export default function Home() {
     const previousFirstClick = firstClick || clickTime
     const currentScore = ((clickTime - previousFirstClick)/1000)
     if(currentId === 0){
+      array.forEach((value: ButtonsArray, key: number) => {
+        array[key].visibility = true
+      })
       occupiedNumbers.forEach((value: ButtonsArray, key: number) => {
         if(typeof key !== 'string'){
           array[key].innerNumberVisibility = false
@@ -82,10 +110,9 @@ export default function Home() {
     }
     array[occupiedNumbers.get(uid)].visibility = false
     setCurrentId(currentId + 1)
-    setButtonsArray(array)
     
     if(uid !== orderedIds[previousId]){
-      occupiedNumbers.forEach((value: ButtonsArray, key: number) => {
+      array.forEach((value: ButtonsArray, key: number) => {
         if(typeof key !== 'string'){
           array[key].visibility = false
         }
@@ -101,12 +128,18 @@ export default function Home() {
         let previousbest = parseInt(localStorage.getItem("best") ?? '9999')
         localStorage.setItem("best", Math.min(currentScore, previousbest).toString())
       }
+      array.forEach((value: ButtonsArray, key: number) => {
+        if(typeof key !== 'string'){
+          array[key].visibility = false
+        }
+      })
       setScore(currentScore)
       setShowAlert({show: true, data: '🎉Congratulation! Improve the score now (click refresh pattern)'})
       setTimeout(() => {
         setShowAlert({show: false, data: ''})
       }, 3000)
     }
+    setButtonsArray(array)
   }
 
   const getBestScore = () => {
@@ -185,10 +218,10 @@ export default function Home() {
 
         <a
             className={styles.card}
-            href="/next-level"
+            href="/"
           >
           <h2 className={inter.className}>
-            Goto next level <span>-&gt;</span>
+            Goto first level <span>-&gt;</span>
           </h2>
         </a>
       </div>
