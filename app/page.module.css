@@ -5,6 +5,7 @@
   align-items: center;
   padding: 6rem;
   min-height: 100vh;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(241 245 249 / 0.03)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
 }
 
 .description {
@@ -67,7 +68,7 @@
 .card p {
   margin: 0;
   opacity: 0.6;
-  font-size: 0.9rem;
+  font-size: 2.0rem;
   line-height: 1.5;
   max-width: 34ch;
 }
@@ -78,6 +79,19 @@
   align-items: center;
   position: relative;
   padding: 4rem 0;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.center_grid{
+  display: grid;
+  grid-template-columns: repeat(9, 100px);
+  grid-template-rows: repeat(5, 100px);
+  gap: 20px;
+}
+
+.center_grid button{
+  font-size: 30px;
 }
 
 .center::before {
@@ -102,6 +116,7 @@
   position: absolute;
   filter: blur(45px);
   transform: translateZ(0);
+  z-index: -1;
 }
 
 .logo,
@@ -247,6 +262,32 @@
       rgb(var(--background-end-rgb)) 40%
     );
     z-index: 1;
+  }
+}
+
+@media (max-width: 1179px){
+  .center_grid{
+    display: grid;
+    grid-template-columns: repeat(9, 70px);
+    grid-template-rows: repeat(5, 70px);
+    gap: 10px;
+  }
+  
+  .center_grid button{
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 767px){
+  .center_grid{
+    display: grid;
+    grid-template-columns: repeat(9, 33px);
+    grid-template-rows: repeat(5, 33px);
+    gap: 3px;
+  }
+  
+  .center_grid button{
+    font-size: 20px;
   }
 }
 
