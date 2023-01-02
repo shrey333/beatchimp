@@ -97,14 +97,25 @@ export default function Home() {
       }, 3000)
     }
     if(previousId === orderedIds.length - 1){
-      let previousbest = parseInt(localStorage.getItem("best") ?? '0')
-      localStorage.setItem("best", Math.max(currentScore, previousbest).toString())
+      if (typeof window !== 'undefined') {
+        let previousbest = parseInt(localStorage.getItem("best") ?? '0')
+        localStorage.setItem("best", Math.max(currentScore, previousbest).toString())
+      }
       setScore(currentScore)
       setShowAlert({show: true, data: '🎉Congratulation! Improve the score now (click refresh pattern)'})
       setTimeout(() => {
         setShowAlert({show: false, data: ''})
       }, 3000)
     }
+  }
+
+  const getBestScore = () => {
+    let bestScore
+    if (typeof window !== 'undefined') {
+      bestScore = localStorage.getItem('best') || 9999
+      return <>{bestScore}</>
+    }
+    return <></>
   }
 
   return (
@@ -169,10 +180,8 @@ export default function Home() {
           <h2 className={inter.className}>
             Your best score
           </h2>
-          <p className={inter.className}>{localStorage.getItem('best')}s</p>
+          <p className={inter.className}>{getBestScore()}s</p>
         </div>
-
-        
       </div>
     </main>
   )
